@@ -7,7 +7,7 @@ body {
   margin: 0;
   padding: 0;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: white;
+  background: #FFFDF6;
   min-height: 100vh;
   color: #333;
 }
@@ -30,24 +30,27 @@ body {
 
 /* Header styles */
 .todo-header {
-  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  background: linear-gradient(135deg, #D4C493 0%, #C4B583 50%, #B4A573 100%);
   color: white;
   padding: 40px;
   text-align: center;
+  box-shadow: 0 4px 20px rgba(180, 165, 115, 0.6);
+  border-bottom: 3px solid #A69B7A;
 }
 
 .todo-header h1 {
   margin: 0 0 10px 0;
   font-size: 2.5rem;
   font-weight: 700;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .todo-header p {
   margin: 0;
   font-size: 1.1rem;
-  opacity: 0.9;
-  font-weight: 300;
+  opacity: 0.95;
+  font-weight: 400;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 /* Content area */
@@ -65,8 +68,8 @@ body {
 /* Sidebar Styles */
 .sidebar {
   width: 350px;
-  background: #fef3c7;
-  border-right: 2px solid #fde68a;
+  background: #FEFCF0;
+  border-right: 2px solid #F5E6B3;
   padding: 30px;
   position: sticky;
   top: 0;
@@ -80,7 +83,7 @@ body {
 
 .sidebar-content h3 {
   margin: 0 0 25px 0;
-  color: #92400e;
+  color: #8B7355;
   font-size: 1.4rem;
   font-weight: 600;
 }
@@ -89,7 +92,7 @@ body {
 .main-content {
   flex: 1;
   padding: 30px;
-  background: white;
+  background: #FFFEF8;
   display: flex;
   flex-direction: column;
   height: calc(100vh - 200px);
@@ -102,20 +105,20 @@ body {
   align-items: center;
   margin-bottom: 25px;
   padding-bottom: 15px;
-  border-bottom: 2px solid #f3f4f6;
+  border-bottom: 2px solid #F5E6B3;
   flex-shrink: 0;
 }
 
 .content-header h3 {
   margin: 0;
-  color: #111827;
+  color: #8B7355;
   font-size: 1.5rem;
   font-weight: 600;
 }
 
 .task-count {
-  background: #fef3c7;
-  color: #92400e;
+  background: #F5E6B3;
+  color: #8B7355;
   padding: 6px 12px;
   border-radius: 20px;
   font-size: 0.9rem;
@@ -157,13 +160,13 @@ body {
 .form-group label {
   font-weight: 600;
   margin-bottom: 8px;
-  color: #92400e;
+  color: #8B7355;
   font-size: 0.9rem;
 }
 
 .form-control {
   padding: 12px 16px;
-  border: 2px solid #fde68a;
+  border: 2px solid #E6D7A3;
   border-radius: 8px;
   font-size: 1rem;
   transition: all 0.3s ease;
@@ -172,8 +175,8 @@ body {
 
 .form-control:focus {
   outline: none;
-  border-color: #f59e0b;
-  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+  border-color: #D4C493;
+  box-shadow: 0 0 0 3px rgba(212, 196, 147, 0.1);
   transform: translateY(-1px);
 }
 
@@ -199,22 +202,22 @@ body {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-  color: white;
+  background: linear-gradient(135deg, #F5E6B3 0%, #E6D7A3 100%);
+  color: #8B7355;
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(251, 191, 36, 0.3);
+  box-shadow: 0 10px 20px rgba(245, 230, 179, 0.3);
 }
 
 .btn-secondary {
-  background: #6b7280;
+  background: #8B7355;
   color: white;
 }
 
 .btn-secondary:hover {
-  background: #4b5563;
+  background: #7A6B4A;
   transform: translateY(-2px);
 }
 
@@ -255,28 +258,28 @@ body {
 }
 
 .todo-list::-webkit-scrollbar-track {
-  background: #f3f4f6;
+  background: #F5E6B3;
   border-radius: 4px;
 }
 
 .todo-list::-webkit-scrollbar-thumb {
-  background: #fbbf24;
+  background: #E6D7A3;
   border-radius: 4px;
 }
 
 .todo-list::-webkit-scrollbar-thumb:hover {
-  background: #f59e0b;
+  background: #D4C493;
 }
 
 /* Firefox Scrollbar */
 .todo-list {
   scrollbar-width: thin;
-  scrollbar-color: #fbbf24 #f3f4f6;
+  scrollbar-color: #E6D7A3 #F5E6B3;
 }
 
 .todo-item {
   background: white;
-  border: 2px solid #f3f4f6;
+  border: 2px solid #F5E6B3;
   border-radius: 12px;
   padding: 25px;
   transition: all 0.3s ease;
@@ -286,8 +289,8 @@ body {
 }
 
 .todo-item:hover {
-  border-color: #fbbf24;
-  box-shadow: 0 10px 30px rgba(251, 191, 36, 0.1);
+  border-color: #E6D7A3;
+  box-shadow: 0 10px 30px rgba(245, 230, 179, 0.1);
   transform: translateY(-2px);
 }
 
@@ -311,7 +314,7 @@ body {
 .todo-title {
   font-size: 1.3rem;
   font-weight: 600;
-  color: #111827;
+  color: #8B7355;
   margin: 0;
 }
 
@@ -330,8 +333,8 @@ body {
 }
 
 .priority-medium {
-  background: #fffbeb;
-  color: #d97706;
+  background: #F5E6B3;
+  color: #8B7355;
 }
 
 .priority-low {
@@ -355,8 +358,8 @@ body {
   font-size: 0.9rem;
   color: #6b7280;
   padding: 15px 0;
-  border-top: 1px solid #f3f4f6;
-  border-bottom: 1px solid #f3f4f6;
+  border-top: 1px solid #F5E6B3;
+  border-bottom: 1px solid #F5E6B3;
 }
 
 .todo-meta > div {
@@ -393,18 +396,19 @@ body {
 .empty-state {
   text-align: center;
   padding: 60px 20px;
-  color: #6b7280;
+  color: #8B7355;
 }
 
 .empty-state h3 {
   font-size: 1.5rem;
   margin-bottom: 10px;
-  color: #374151;
+  color: #8B7355;
 }
 
 .empty-state p {
   font-size: 1.1rem;
   margin: 0;
+  color: #A69B7A;
 }
 
 /* Messages */
@@ -432,7 +436,7 @@ body {
 .loading {
   text-align: center;
   padding: 60px 20px;
-  color: #6b7280;
+  color: #8B7355;
 }
 
 .loading h3 {
