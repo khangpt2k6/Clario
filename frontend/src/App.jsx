@@ -1,21 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { format } from 'date-fns';
-import './App.css';
 
 const API_BASE_URL = 'http://localhost:8080/api';
 
-// Safe date formatting function
-const safeFormatDate = (dateString, formatString) => {
+// Simple date formatting function
+const formatDate = (dateString, formatType) => {
   if (!dateString) return 'Unknown';
   try {
     const date = new Date(dateString);
     if (isNaN(date.getTime())) return 'Invalid Date';
-    return format(date, formatString);
+    
+    if (formatType === 'yyyy-MM-dd') {
+      return date.toISOString().split('T')[0];
+    } else {
+      return date.toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric' 
+      });
+    }
   } catch (error) {
     console.error('Date formatting error:', error);
     return 'Invalid Date';
   }
+};
+
+// Safe date formatting function
+const safeFormatDate = (dateString, formatString) => {
+  return formatDate(dateString, formatString);
 };
 
 // Priority sorting function
@@ -157,164 +169,228 @@ function App() {
 
   if (loading) {
     return (
-      <div className="container">
-        <div className="loading">
-          <h3>Loading todos...</h3>
+      <div className="min-h-screen bg-gradient-to-br from-teal-50 to-emerald-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto mb-4"></div>
+          <h3 className="text-xl font-semibold text-gray-800 animate-pulse">Loading todos...</h3>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="container">
-      <div className="todo-app">
-        <div className="todo-header">
-          <h1>Clario</h1>
-          <p>Organize your tasks efficiently</p>
-        </div>
-
-        <div className="todo-layout">
-          {/* Left Sidebar - Add/Edit Panel */}
-          <div className="sidebar">
-            <div className="sidebar-content">
-              <h3>{editingTodo ? 'Edit Task' : 'Add New Task'}</h3>
-              
-              <form onSubmit={handleSubmit} className="todo-form">
-                <div className="form-group">
-                  <label htmlFor="title">Title *</label>
-                  <input
-                    type="text"
-                    id="title"
-                    className="form-control"
-                    value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    placeholder="What needs to be done?"
-                    required
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="description">Description</label>
-                  <textarea
-                    id="description"
-                    className="form-control"
-                    value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    placeholder="Add more details..."
-                    rows="4"
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="priority">Priority</label>
-                  <select
-                    id="priority"
-                    className="form-control"
-                    value={formData.priority}
-                    onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
-                  >
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
-                  </select>
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="dueDate">Due Date</label>
-                  <input
-                    type="date"
-                    id="dueDate"
-                    className="form-control"
-                    value={formData.dueDate}
-                    onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
-                  />
-                </div>
-
-                <div className="form-actions">
-                  <button type="submit" className="btn btn-primary">
-                    {editingTodo ? 'Update Task' : 'Add Task'}
-                  </button>
-
-                  {editingTodo && (
-                    <button type="button" className="btn btn-secondary" onClick={handleCancelEdit}>
-                      Cancel
-                    </button>
-                  )}
-                </div>
-              </form>
-            </div>
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 to-emerald-50 p-4">
+      <div className="max-w-7xl mx-auto">
+        <div className="bg-white/95 rounded-2xl shadow-2xl overflow-hidden backdrop-blur-sm">
+          {/* Header */}
+          <div className="bg-gradient-to-r from-teal-600 via-teal-700 to-emerald-700 text-white px-8 py-6 text-center shadow-lg">
+            <h1 className="text-3xl font-bold mb-1 text-shadow">Clario</h1>
+            <p className="text-teal-100 text-base font-medium">Organize your tasks efficiently</p>
           </div>
 
-          {/* Right Main Area - Task List */}
-          <div className="main-content">
-            <div className="content-header">
-              <h3>Your Tasks</h3>
-              {todos.length > 0 && (
-                <span className="task-count">{todos.length} task{todos.length !== 1 ? 's' : ''}</span>
-              )}
+          <div className="flex flex-col lg:flex-row min-h-[calc(100vh-200px)]">
+            {/* Left Sidebar - Add/Edit Panel */}
+            <div className="w-full lg:w-80 xl:w-96 bg-gray-50/50 border-r border-teal-100 p-6">
+              <div className="h-full flex flex-col">
+                <h3 className="text-xl font-semibold text-gray-800 mb-6">
+                  {editingTodo ? 'Edit Task' : 'Add New Task'}
+                </h3>
+                
+                <div className="flex flex-col flex-1">
+                  <div className="mb-4">
+                    <label htmlFor="title" className="block text-sm font-semibold text-gray-700 mb-2">
+                      Title *
+                    </label>
+                    <input
+                      type="text"
+                      id="title"
+                      className="w-full px-4 py-3 border-2 border-teal-100 rounded-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-200 focus:outline-none transition-all duration-200 bg-white hover:border-teal-200"
+                      value={formData.title}
+                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                      placeholder="What needs to be done?"
+                      required
+                    />
+                  </div>
+
+                  <div className="mb-4">
+                    <label htmlFor="description" className="block text-sm font-semibold text-gray-700 mb-2">
+                      Description
+                    </label>
+                    <textarea
+                      id="description"
+                      className="w-full px-4 py-3 border-2 border-teal-100 rounded-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-200 focus:outline-none transition-all duration-200 bg-white hover:border-teal-200 resize-none"
+                      value={formData.description}
+                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                      placeholder="Add more details..."
+                      rows="4"
+                    />
+                  </div>
+
+                  <div className="mb-4">
+                    <label htmlFor="priority" className="block text-sm font-semibold text-gray-700 mb-2">
+                      Priority
+                    </label>
+                    <select
+                      id="priority"
+                      className="w-full px-4 py-3 border-2 border-teal-100 rounded-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-200 focus:outline-none transition-all duration-200 bg-white hover:border-teal-200"
+                      value={formData.priority}
+                      onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
+                    >
+                      <option value="low">Low</option>
+                      <option value="medium">Medium</option>
+                      <option value="high">High</option>
+                    </select>
+                  </div>
+
+                  <div className="mb-6">
+                    <label htmlFor="dueDate" className="block text-sm font-semibold text-gray-700 mb-2">
+                      Due Date
+                    </label>
+                    <input
+                      type="date"
+                      id="dueDate"
+                      className="w-full px-4 py-3 border-2 border-teal-100 rounded-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-200 focus:outline-none transition-all duration-200 bg-white hover:border-teal-200"
+                      value={formData.dueDate}
+                      onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row gap-3 mt-auto">
+                    <button 
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (formData.title.trim()) {
+                          handleSubmit(e);
+                        }
+                      }}
+                      className="flex-1 bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+                    >
+                      {editingTodo ? 'Update Task' : 'Add Task'}
+                    </button>
+
+                    {editingTodo && (
+                      <button 
+                        type="button" 
+                        className="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                        onClick={handleCancelEdit}
+                      >
+                        Cancel
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
 
-            {error && <div className="error">{error}</div>}
-            {success && <div className="success">{success}</div>}
+            {/* Right Main Area - Task List */}
+            <div className="flex-1 p-6 flex flex-col">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 pb-4 border-b-2 border-teal-100">
+                <h3 className="text-xl font-semibold text-gray-800 mb-2 sm:mb-0">Your Tasks</h3>
+                {todos.length > 0 && (
+                  <span className="bg-yellow-400 text-gray-900 px-4 py-2 rounded-full text-sm font-semibold">
+                    {todos.length} task{todos.length !== 1 ? 's' : ''}
+                  </span>
+                )}
+              </div>
 
-            <div className="todo-list">
-              {todos.length === 0 ? (
-                <div className="empty-state">
-                  <h3>No tasks yet</h3>
-                  <p>Create your first task to get started!</p>
+              {error && (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4 animate-pulse">
+                  {error}
                 </div>
-              ) : (
-                sortTodosByPriority(todos).map((todo) => (
-                  <div key={todo.id} className={`todo-item ${todo.completed ? 'completed' : ''}`}>
-                    <div className="todo-header-row">
-                      <div className="todo-title">{todo.title}</div>
-                      <span className={`todo-priority priority-${todo.priority}`}>
-                        {todo.priority}
-                      </span>
-                    </div>
-
-                    {todo.description && (
-                      <div className="todo-description">{todo.description}</div>
-                    )}
-
-                    <div className="todo-meta">
-                      <div className="date-info">
-                        {todo.due_date && (
-                          <span>
-                            Due: {safeFormatDate(todo.due_date, 'MMM dd, yyyy')}
-                          </span>
-                        )}
-                      </div>
-                      <div className="date-info">
-                        Created: {safeFormatDate(todo.created_at, 'MMM dd, yyyy')}
-                      </div>
-                    </div>
-
-                    <div className="todo-actions">
-                      <button
-                        className={`btn ${todo.completed ? 'btn-secondary' : 'btn-success'}`}
-                        onClick={() => handleToggle(todo.id)}
-                      >
-                        {todo.completed ? 'Completed' : 'Mark Complete'}
-                      </button>
-
-                      <button
-                        className="btn btn-secondary"
-                        onClick={() => handleEdit(todo)}
-                      >
-                        Edit
-                      </button>
-
-                      <button
-                        className="btn btn-danger"
-                        onClick={() => handleDelete(todo.id)}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </div>
-                ))
               )}
+              
+              {success && (
+                <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-4 animate-pulse">
+                  {success}
+                </div>
+              )}
+
+              <div className="flex-1 overflow-y-auto pr-2">
+                {todos.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center h-full text-center py-16">
+                    <div className="text-6xl mb-4">📝</div>
+                    <h3 className="text-xl font-semibold text-gray-800 mb-2">No tasks yet</h3>
+                    <p className="text-gray-600">Create your first task to get started!</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {sortTodosByPriority(todos).map((todo) => (
+                      <div 
+                        key={todo.id} 
+                        className={`bg-white border-2 rounded-xl p-6 transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-1 ${
+                          todo.completed 
+                            ? 'border-green-200 bg-green-50/50' 
+                            : 'border-teal-100 hover:border-teal-300'
+                        }`}
+                      >
+                        <div className="flex justify-between items-start mb-3">
+                          <h4 className={`text-lg font-semibold ${
+                            todo.completed ? 'text-gray-600 line-through' : 'text-gray-800'
+                          }`}>
+                            {todo.title}
+                          </h4>
+                          <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
+                            todo.priority === 'high' 
+                              ? 'bg-red-500 text-white' 
+                              : todo.priority === 'medium'
+                              ? 'bg-yellow-400 text-gray-900'
+                              : 'bg-teal-500 text-white'
+                          }`}>
+                            {todo.priority}
+                          </span>
+                        </div>
+
+                        {todo.description && (
+                          <p className="text-gray-600 mb-4 leading-relaxed">{todo.description}</p>
+                        )}
+
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 border-t border-b border-gray-100 text-sm text-gray-600 mb-4">
+                          <div className="flex items-center gap-2 mb-2 sm:mb-0">
+                            {todo.due_date && (
+                              <span className="flex items-center gap-1">
+                                <span className="font-medium">Due:</span>
+                                {safeFormatDate(todo.due_date, 'MMM dd, yyyy')}
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <span className="font-medium">Created:</span>
+                            {safeFormatDate(todo.created_at, 'MMM dd, yyyy')}
+                          </div>
+                        </div>
+
+                        <div className="flex flex-wrap gap-3">
+                          <button
+                            className={`px-4 py-2 rounded-lg font-semibold transition-all duration-200 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                              todo.completed 
+                                ? 'bg-gray-500 hover:bg-gray-600 text-white focus:ring-gray-400' 
+                                : 'bg-green-500 hover:bg-green-600 text-white focus:ring-green-400'
+                            }`}
+                            onClick={() => handleToggle(todo.id)}
+                          >
+                            {todo.completed ? 'Completed' : 'Mark Complete'}
+                          </button>
+
+                          <button
+                            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold transition-all duration-200 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
+                            onClick={() => handleEdit(todo)}
+                          >
+                            Edit
+                          </button>
+
+                          <button
+                            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-semibold transition-all duration-200 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2"
+                            onClick={() => handleDelete(todo.id)}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
