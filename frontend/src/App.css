@@ -1,0 +1,155 @@
+/* Additional App-specific styles */
+.todo-form {
+  border: 1px solid #ffeaa7;
+}
+
+.todo-form:hover {
+  border-color: #ffd700;
+}
+
+.form-control:focus {
+  transform: translateY(-1px);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.todo-item {
+  position: relative;
+  overflow: hidden;
+}
+
+.todo-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(135deg, #ffd700 0%, #ffb347 100%);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.todo-item:hover::before {
+  transform: scaleX(1);
+}
+
+.todo-item.completed::before {
+  background: #28a745;
+  transform: scaleX(1);
+}
+
+.priority-high::before {
+  content: '🔥 ';
+}
+
+.priority-medium::before {
+  content: '⚡ ';
+}
+
+.priority-low::before {
+  content: '💡 ';
+}
+
+.todo-actions .btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.todo-actions .btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 215, 0, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s ease, height 0.3s ease;
+}
+
+.todo-actions .btn:hover::before {
+  width: 200px;
+  height: 200px;
+}
+
+/* Animation for new todos */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.todo-item {
+  animation: slideIn 0.3s ease;
+}
+
+/* Loading animation */
+.loading h3 {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Success/Error message animations */
+.success, .error {
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive improvements */
+@media (max-width: 480px) {
+  .todo-header h1 {
+    font-size: 1.8rem;
+  }
+  
+  .todo-header p {
+    font-size: 1rem;
+  }
+  
+  .todo-content {
+    padding: 15px;
+  }
+  
+  .todo-form {
+    padding: 20px;
+  }
+  
+  .todo-item {
+    padding: 15px;
+  }
+  
+  .todo-actions {
+    gap: 8px;
+  }
+  
+  .todo-actions .btn {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+}
