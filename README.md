@@ -1,7 +1,7 @@
 # Clario - Modern Todo Application
 
 A clean, professional, and responsive todo list application built with Go backend and React frontend. Clario provides an intuitive interface for managing tasks with priority-based organization and modern design principles.
-<img width="1555" height="912" alt="image" src="https://github.com/user-attachments/assets/15f4963d-2ea7-4e9b-9b4e-5f82dcc8c0ec" />
+<img width="1590" height="900" alt="image" src="https://github.com/user-attachments/assets/b5933d42-cb1f-4aa2-9b7d-d75c80df38e2" />
 ## Features
 
 ### Core Functionality
