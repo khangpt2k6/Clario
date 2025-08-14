@@ -1,10 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { format } from 'date-fns';
-import { Plus, Edit, Trash2, Check, X, Calendar, AlertCircle } from 'lucide-react';
 import './App.css';
 
 const API_BASE_URL = 'http://localhost:8080/api';
+
+// Safe date formatting function
+const safeFormatDate = (dateString, formatString) => {
+  if (!dateString) return 'Unknown';
+  try {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return 'Invalid Date';
+    return format(date, formatString);
+  } catch (error) {
+    console.error('Date formatting error:', error);
+    return 'Invalid Date';
+  }
+};
+
+// Priority sorting function
+const sortTodosByPriority = (todos) => {
+  const priorityOrder = { high: 1, medium: 2, low: 3 };
+  return [...todos].sort((a, b) => {
+    return priorityOrder[a.priority] - priorityOrder[b.priority];
+  });
+};
 
 function App() {
   const [todos, setTodos] = useState([]);
@@ -27,8 +47,10 @@ function App() {
     try {
       setLoading(true);
       const response = await axios.get(`${API_BASE_URL}/todos`);
+      console.log('API Response:', response.data); // Debug log
       if (response.data.success) {
         setTodos(response.data.data);
+        console.log('Todos set:', response.data.data); // Debug log
       }
     } catch (err) {
       setError('Failed to fetch todos');
@@ -42,8 +64,10 @@ function App() {
     e.preventDefault();
     try {
       const todoData = {
-        ...formData,
-        dueDate: formData.dueDate ? new Date(formData.dueDate).toISOString() : null
+        title: formData.title,
+        description: formData.description,
+        priority: formData.priority,
+        due_date: formData.dueDate ? new Date(formData.dueDate).toISOString() : null
       };
 
       if (editingTodo) {
@@ -76,7 +100,7 @@ function App() {
       title: todo.title,
       description: todo.description,
       priority: todo.priority,
-      dueDate: todo.dueDate ? format(new Date(todo.dueDate), 'yyyy-MM-dd') : ''
+      dueDate: todo.due_date ? safeFormatDate(todo.due_date, 'yyyy-MM-dd') : ''
     });
   };
 
@@ -145,142 +169,153 @@ function App() {
     <div className="container">
       <div className="todo-app">
         <div className="todo-header">
-          <h1>✨ Todo List</h1>
-          <p>Organize your tasks with style</p>
+          <h1>Clario</h1>
+          <p>Organize your tasks efficiently</p>
         </div>
 
-        <div className="todo-content">
-          {error && <div className="error">{error}</div>}
-          {success && <div className="success">{success}</div>}
-
-          <form onSubmit={handleSubmit} className="todo-form">
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="title">Title *</label>
-                <input
-                  type="text"
-                  id="title"
-                  className="form-control"
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  placeholder="What needs to be done?"
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="priority">Priority</label>
-                <select
-                  id="priority"
-                  className="form-control"
-                  value={formData.priority}
-                  onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
-                >
-                  <option value="low">Low</option>
-                  <option value="medium">Medium</option>
-                  <option value="high">High</option>
-                </select>
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="dueDate">Due Date</label>
-                <input
-                  type="date"
-                  id="dueDate"
-                  className="form-control"
-                  value={formData.dueDate}
-                  onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
-                />
-              </div>
-
-              <button type="submit" className="btn btn-primary">
-                {editingTodo ? <Edit size={18} /> : <Plus size={18} />}
-                {editingTodo ? 'Update' : 'Add Todo'}
-              </button>
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="description">Description</label>
-              <textarea
-                id="description"
-                className="form-control"
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder="Add more details..."
-                rows="3"
-              />
-            </div>
-
-            {editingTodo && (
-              <button type="button" className="btn btn-secondary" onClick={handleCancelEdit}>
-                <X size={18} />
-                Cancel
-              </button>
-            )}
-          </form>
-
-          <div className="todo-list">
-            {todos.length === 0 ? (
-              <div className="empty-state">
-                <h3>No todos yet</h3>
-                <p>Create your first todo to get started!</p>
-              </div>
-            ) : (
-              todos.map((todo) => (
-                <div key={todo.id} className={`todo-item ${todo.completed ? 'completed' : ''}`}>
-                  <div className="todo-header-row">
-                    <div className="todo-title">{todo.title}</div>
-                    <span className={`todo-priority priority-${todo.priority}`}>
-                      {todo.priority}
-                    </span>
-                  </div>
-
-                  {todo.description && (
-                    <div className="todo-description">{todo.description}</div>
-                  )}
-
-                  <div className="todo-meta">
-                    <div>
-                      {todo.dueDate && (
-                        <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                          <Calendar size={16} />
-                          {format(new Date(todo.dueDate), 'MMM dd, yyyy')}
-                        </span>
-                      )}
-                    </div>
-                    <div>
-                      Created: {format(new Date(todo.createdAt), 'MMM dd, yyyy')}
-                    </div>
-                  </div>
-
-                  <div className="todo-actions">
-                    <button
-                      className={`btn ${todo.completed ? 'btn-secondary' : 'btn-success'}`}
-                      onClick={() => handleToggle(todo.id)}
-                    >
-                      <Check size={16} />
-                      {todo.completed ? 'Completed' : 'Mark Complete'}
-                    </button>
-
-                    <button
-                      className="btn btn-secondary"
-                      onClick={() => handleEdit(todo)}
-                    >
-                      <Edit size={16} />
-                      Edit
-                    </button>
-
-                    <button
-                      className="btn btn-danger"
-                      onClick={() => handleDelete(todo.id)}
-                    >
-                      <Trash2 size={16} />
-                      Delete
-                    </button>
-                  </div>
+        <div className="todo-layout">
+          {/* Left Sidebar - Add/Edit Panel */}
+          <div className="sidebar">
+            <div className="sidebar-content">
+              <h3>{editingTodo ? 'Edit Task' : 'Add New Task'}</h3>
+              
+              <form onSubmit={handleSubmit} className="todo-form">
+                <div className="form-group">
+                  <label htmlFor="title">Title *</label>
+                  <input
+                    type="text"
+                    id="title"
+                    className="form-control"
+                    value={formData.title}
+                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    placeholder="What needs to be done?"
+                    required
+                  />
                 </div>
-              ))
-            )}
+
+                <div className="form-group">
+                  <label htmlFor="description">Description</label>
+                  <textarea
+                    id="description"
+                    className="form-control"
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    placeholder="Add more details..."
+                    rows="4"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="priority">Priority</label>
+                  <select
+                    id="priority"
+                    className="form-control"
+                    value={formData.priority}
+                    onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
+                  >
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="dueDate">Due Date</label>
+                  <input
+                    type="date"
+                    id="dueDate"
+                    className="form-control"
+                    value={formData.dueDate}
+                    onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
+                  />
+                </div>
+
+                <div className="form-actions">
+                  <button type="submit" className="btn btn-primary">
+                    {editingTodo ? 'Update Task' : 'Add Task'}
+                  </button>
+
+                  {editingTodo && (
+                    <button type="button" className="btn btn-secondary" onClick={handleCancelEdit}>
+                      Cancel
+                    </button>
+                  )}
+                </div>
+              </form>
+            </div>
+          </div>
+
+          {/* Right Main Area - Task List */}
+          <div className="main-content">
+            <div className="content-header">
+              <h3>Your Tasks</h3>
+              {todos.length > 0 && (
+                <span className="task-count">{todos.length} task{todos.length !== 1 ? 's' : ''}</span>
+              )}
+            </div>
+
+            {error && <div className="error">{error}</div>}
+            {success && <div className="success">{success}</div>}
+
+            <div className="todo-list">
+              {todos.length === 0 ? (
+                <div className="empty-state">
+                  <h3>No tasks yet</h3>
+                  <p>Create your first task to get started!</p>
+                </div>
+              ) : (
+                sortTodosByPriority(todos).map((todo) => (
+                  <div key={todo.id} className={`todo-item ${todo.completed ? 'completed' : ''}`}>
+                    <div className="todo-header-row">
+                      <div className="todo-title">{todo.title}</div>
+                      <span className={`todo-priority priority-${todo.priority}`}>
+                        {todo.priority}
+                      </span>
+                    </div>
+
+                    {todo.description && (
+                      <div className="todo-description">{todo.description}</div>
+                    )}
+
+                    <div className="todo-meta">
+                      <div className="date-info">
+                        {todo.due_date && (
+                          <span>
+                            Due: {safeFormatDate(todo.due_date, 'MMM dd, yyyy')}
+                          </span>
+                        )}
+                      </div>
+                      <div className="date-info">
+                        Created: {safeFormatDate(todo.created_at, 'MMM dd, yyyy')}
+                      </div>
+                    </div>
+
+                    <div className="todo-actions">
+                      <button
+                        className={`btn ${todo.completed ? 'btn-secondary' : 'btn-success'}`}
+                        onClick={() => handleToggle(todo.id)}
+                      >
+                        {todo.completed ? 'Completed' : 'Mark Complete'}
+                      </button>
+
+                      <button
+                        className="btn btn-secondary"
+                        onClick={() => handleEdit(todo)}
+                      >
+                        Edit
+                      </button>
+
+                      <button
+                        className="btn btn-danger"
+                        onClick={() => handleDelete(todo.id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
         </div>
       </div>

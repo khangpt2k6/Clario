@@ -1,3 +1,4 @@
+// This is code by Khang Phan
 package main
 
 import (
@@ -28,31 +29,39 @@ func main() {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	// Initialize router
-	r := gin.Default()
+	// Initialize router with custom configuration
+	r := gin.New()
 
-	// Add CORS middleware
+	// Add recovery and logger middleware
+	r.Use(gin.Recovery())
+	r.Use(gin.Logger())
+
+	// Disable automatic trailing slash redirect
+	r.RedirectTrailingSlash = false
+	r.RedirectFixedPath = false
+
+	// Add CORS middleware BEFORE any routes
 	r.Use(middleware.CORS())
 
-	// API routes
+	// Health check (before API routes)
+	r.GET("/health", func(c *gin.Context) {
+		c.JSON(200, gin.H{"status": "ok", "message": "Todo API is running"})
+	})
+
+	// API routes - make them explicit without trailing slashes
 	api := r.Group("/api")
 	{
 		// Todo routes
 		todos := api.Group("/todos")
 		{
-			todos.GET("/", handlers.GetTodos)
+			todos.GET("", handlers.GetTodos) // No trailing slash
 			todos.GET("/:id", handlers.GetTodo)
-			todos.POST("/", handlers.CreateTodo)
+			todos.POST("", handlers.CreateTodo) // No trailing slash
 			todos.PUT("/:id", handlers.UpdateTodo)
 			todos.DELETE("/:id", handlers.DeleteTodo)
 			todos.PATCH("/:id/toggle", handlers.ToggleTodo)
 		}
 	}
-
-	// Health check
-	r.GET("/health", func(c *gin.Context) {
-		c.JSON(200, gin.H{"status": "ok", "message": "Todo API is running"})
-	})
 
 	// Get port from environment or use default
 	port := os.Getenv("PORT")
@@ -61,6 +70,8 @@ func main() {
 	}
 
 	log.Printf("Server starting on port %s", port)
+	log.Printf("CORS enabled for origin: http://localhost:5173")
+	log.Printf("Trailing slash redirects disabled")
 	if err := r.Run(":" + port); err != nil {
 		log.Fatal("Failed to start server:", err)
 	}
