@@ -3,16 +3,16 @@ FROM golang:1.21-alpine AS builder
 
 WORKDIR /app
 
-# Copy go mod files (only go.mod for now)
-COPY go.mod ./
+# Copy go mod files
+COPY go.mod go.sum ./
 
-# Download dependencies and generate go.sum
-RUN go mod download && go mod verify
+# Download dependencies
+RUN go mod download
 
 # Copy source code
 COPY . .
 
-# Build the application
+# Build the application from the correct module path
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
 
 # Final stage

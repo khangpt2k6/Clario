@@ -1,4 +1,4 @@
-module backend
+module github.com/yourusername/todo-app
 
 go 1.21.1
 
