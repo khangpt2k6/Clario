@@ -5,9 +5,9 @@ import (
 	"log"
 	"os"
 
-	"backend/database"
-	"backend/handlers"
-	"backend/middleware"
+	"github.com/yourusername/todo-app/database"
+	"github.com/yourusername/todo-app/handlers"
+	"github.com/yourusername/todo-app/middleware"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"

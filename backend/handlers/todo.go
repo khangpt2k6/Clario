@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"time"
 
-	"backend/database"
-	"backend/models"
+	"github.com/yourusername/todo-app/database"
+	"github.com/yourusername/todo-app/models"
 
 	"github.com/gin-gonic/gin"
 )
