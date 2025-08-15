@@ -70,7 +70,7 @@ func main() {
 	}
 
 	log.Printf("Server starting on port %s", port)
-	log.Printf("CORS enabled for origin: http://localhost:5173")
+	log.Printf("CORS enabled for production frontend")
 	log.Printf("Trailing slash redirects disabled")
 	if err := r.Run(":" + port); err != nil {
 		log.Fatal("Failed to start server:", err)
