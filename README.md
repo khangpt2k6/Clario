@@ -2,6 +2,12 @@
 
 A clean, professional, and responsive todo list application built with Go backend and React frontend. Clario provides an intuitive interface for managing tasks with priority-based organization and modern design principles.
 <img width="1914" height="914" alt="image" src="https://github.com/user-attachments/assets/383a9109-8cd1-4bb9-8f01-1edd1e120e79" />
+
+## Live Demo  
+Access the deployed application: [https://clario-frontend.onrender.com/](https://clario-frontend.onrender.com/)  
+
+**Deployment Environment:** Dockerized application hosted on Render.
+
 ## Features
 
 ### Core Functionality
