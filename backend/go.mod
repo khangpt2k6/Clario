@@ -1,4 +1,4 @@
-module github.com/yourusername/todo-app
+module todo-app
 
 go 1.21.1
 
