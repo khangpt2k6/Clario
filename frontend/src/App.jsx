@@ -58,7 +58,7 @@ function App() {
   const fetchTodos = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${API_BASE_URL}/todos`);
+      const response = await axios.get(`${API_BASE_URL}/api/todos`);
       console.log('API Response:', response.data); // Debug log
       if (response.data.success) {
         setTodos(response.data.data);
@@ -84,7 +84,7 @@ function App() {
 
       if (editingTodo) {
         // Update existing todo
-        const response = await axios.put(`${API_BASE_URL}/todos/${editingTodo.id}`, todoData);
+        const response = await axios.put(`${API_BASE_URL}/api/todos/${editingTodo.id}`, todoData);
         if (response.data.success) {
           setSuccess('Todo updated successfully!');
           setEditingTodo(null);
@@ -93,7 +93,7 @@ function App() {
         }
       } else {
         // Create new todo
-        const response = await axios.post(`${API_BASE_URL}/todos`, todoData);
+        const response = await axios.post(`${API_BASE_URL}/api/todos`, todoData);
         if (response.data.success) {
           setSuccess('Todo created successfully!');
           resetForm();
@@ -124,7 +124,7 @@ function App() {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this todo?')) {
       try {
-        const response = await axios.delete(`${API_BASE_URL}/todos/${id}`);
+        const response = await axios.delete(`${API_BASE_URL}/api/todos/${id}`);
         if (response.data.success) {
           setSuccess('Todo deleted successfully!');
           fetchTodos();
@@ -138,7 +138,7 @@ function App() {
 
   const handleToggle = async (id) => {
     try {
-      const response = await axios.patch(`${API_BASE_URL}/todos/${id}/toggle`);
+      const response = await axios.patch(`${API_BASE_URL}/api/todos/${id}/toggle`);
       if (response.data.success) {
         fetchTodos();
       }
