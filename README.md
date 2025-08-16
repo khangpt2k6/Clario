@@ -1,6 +1,6 @@
 # Clario - Full-Stack To do list
 
-**This is my practice app using Golang and Supabase. It apply CRUD operations with GET, POST, PUT, and DELETE method**
+**This is my practice app using Golang and Supabase. It apply CRUD operations with GET, POST, PUT, and DELETE method of REST API**
 
 A clean, professional, and responsive todo list application built with Go backend and React frontend. Clario provides an intuitive interface for managing tasks with priority-based organization and modern design principles.
 <img width="1914" height="914" alt="image" src="https://github.com/user-attachments/assets/383a9109-8cd1-4bb9-8f01-1edd1e120e79" />
