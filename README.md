@@ -42,6 +42,7 @@ Access the deployed application: [https://clario-frontend.onrender.com/](https:/
 - **GORM**: Object-relational mapping for database operations
 
 ### Frontend
+-**Figma**: prototyped design
 - **React 18**: Modern JavaScript library for user interfaces
 - **Vite**: Fast build tool and development server
 - **CSS3**: Custom styling with responsive design principles
